@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Profile</title>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Profile</h1>
+
+        <nav>
+            <a href="/" class="home">Home</a>
+            <a href="/live" class="live">Live</a>
+            <a href="/cart" class="cart">Cart</a>
+            <a href="/profile" class="profile">Profile</a>
+            <a href="/login" class="live">Login</a>
+            <a href="/register" class="home">Register</a>
+            <a href="/logout" class="cart">Logout</a>
+        </nav>
+    </header>
+
+    <main>
+        <h2 class="label">Welcome, {{ user.name }}</h2>
+
+        <h2 class="label">Your Orders</h2>
+        {% if orders %}
+        <section class="products">
+            {% for order in orders %}
+            <div class="product-list">
+                <h2>Order #{{ order.id }}</h2>
+                <h2>Shipped to: {{ order.address }}</h2>
+                <h2>Status: {{ order.status }}</h2>
+                <p class="price">Total ${{ order.total }}</p>
+                <br>
+                {% include "_order_items.html" with context %}
+                <br>
+            </div>
+            {% endfor %}
+        </section>
+        {% else %}
+            <h2>You haven't placed any orders yet.</h2>
+        {% endif %}
+
+
+
+        
+    </main>
+
+</body>
+</html>

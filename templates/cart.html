@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Cart</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css' ) }}">
+    </head>
+<body>
+
+    <header>
+        <h1>Cart</h1>
+        
+        <nav>
+            <a href="/" class="home">Home</a>
+            <a href="/live" class="live">Live</a>
+            <a href="/cart" class="cart">Cart</a>
+            <a href="/profile" class="profile">Profile</a>
+            <a href="/login" class="home">Login</a>
+        </nav>
+
+    </header>
+
+    <main>
+
+        <h2 class="label">Your Cart</h2>
+        {% if cart_products %}
+            <section class="products">
+            {% for product in cart_products %}
+            <div class="product">
+                <h2 class="name">{{ product.name }}</h2>
+                <p class="price">${{ product.price }}</p> 
+                <br>
+                <a class="view-product" href="{{ url_for('product_detail', product_id=product.id) }}">View product</a>
+                <br><br>
+                <a class="view-product" href="{{ url_for('decrease_quantity', product_id=product.id) }}">-</a>
+                <p class="view-product">{{ product.quantity }}</p>
+                <a class="view-product" href="{{ url_for('increase_quantity', product_id=product.id) }}">+</a>
+            
+            </div>
+
+            {% endfor %}
+            </section>
+            <p class="label">Total item: {{ total_quantity }}</p>
+            <p class="label">Total price: ${{ total_price }}</p>
+            <a class="checkout-button" href="/">Continue shopping</a>
+            <a class="checkout-button" href="/checkout">Checkout</a>
+        {% else %}
+            <h2>Your cart is empty.</h2>
+            <a class="checkout-button" href="/">Continue shopping</a>
+        {% endif %}
+
+
+    </main>
+    
+</body>
+</html>

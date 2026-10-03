@@ -1,0 +1,3 @@
+{% for item in order.products %}
+<p class="price">{{ item.name }} x {{ item.quantity }} = ${{ item.subtotal }}</p>
+{% endfor %}

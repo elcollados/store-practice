@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>All Orders</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    </head>
+</html>
+<body>
+    <header>
+        <h1>Admin</h1>
+        <a href="/logout" class="home">Logout</a>
+
+    </header>
+    <main>
+        <h2>All Orders</h2>
+
+        <section class="products">
+            {% for order in orders %}
+            <div class="product-list">
+                <h2>Order #{{ order.id }}</h2>
+                <h2>Purchaser: {{ order.name }}</h2>
+                <h2>Shipped to: {{ order.address }}</h2>
+                <h2>Status: {{ order.status }}</h2>
+                <form action="{{ url_for('update_status', order_id=order.id) }}" method="POST">
+                    <select class="status" name="status">
+                        <option value="Pending">Pending</option>
+                        <option value="Shipped">Shipped</option>
+                        <option class="Delivered">Deliverd</option>
+                    </select>
+                    <br>
+                    <button class="checkout-button" type="submit">Update</button>
+                </form>
+                
+                <p class="price">Total: ${{ order.total }}</p>
+                <br>
+                <br>
+                
+                
+            </div>
+            {% endfor %}
+        </section>
+
+    </main>
+
+</body>

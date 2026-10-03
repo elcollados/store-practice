@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Live/Videos</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css' ) }}">
+</head>
+<body>
+    <header>
+        <h1>Vidoes</h1>
+
+        <nav>
+            <form action="/search" method="GET">
+                <input type="text" name="search" placeholder="Search Product...">
+                <button type="submit">Go</button>
+            </form>
+
+            <a href="/" class="home">Home</a>
+            <a href="/live" class="live">Live</a>
+            <a href="/cart" class="cart">Cart</a>
+            <a href="/profile" class="profile">Profile</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="video-card">
+            <video width="500" controls autoplay muted loop>
+            <source src="{{ url_for('static', filename='video/green.mp4' ) }}" type="video/mp4">
+            </video>
+
+            <a class="view-product" href="/product/0">View Product</a>
+    
+        </div>
+        
+        
+
+
+
+    </main>
+
+    <main>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </main>
+
+</body>
+</html>

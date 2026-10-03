@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head> 
+    <title>Home</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css' ) }}">
+</head>
+
+<body>
+
+    <header>
+        <h1>Home</h1>
+        
+        <nav>
+            <form action="/search" method="GET">
+                <input type="text" name="search" placeholder="Search Product...">
+                <button type="submit">Go</button>
+            </form>
+            
+            <a href="/" class="home">Home</a>
+            <a href="/live" class="live">Live</a>
+            <a href="/cart" class="cart">Cart</a>
+            <a href="/profile" class="profile">Profile</a>
+        </nav>
+            
+        
+    </header>
+
+<main>
+    <section class="products">
+        {% for product in products %}
+        <div class="product">
+            <a href="{{ url_for('product_detail', product_id=product.id ) }}">
+                <img src="{{ url_for('static', filename='image/' + product.image) }}" alt {{ product.name }}>
+            </a>
+            <a class="name" href="{{ url_for('product_detail', product_id=product.id) }}">{{ product.name }}</a>
+            <p class="price">${{ product.price }}</p>
+            
+            {% if product.stock > 0 %}
+                <p class="stock">In stock: {{product.stock}}</p>
+            {% else %}
+                <p class="stock out">Out of stock</p>
+            {% endif %}
+
+            <a class="view-product" href="{{ url_for('product_detail', product_id=product.id) }}">View Product</a>
+            <a class="view-product" href="{{ url_for('add_to_cart', product_id=product.id ) }}">Add to Cart</a>
+        </div>
+        {% endfor %}
+    </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</main>
+
+</body>
+</html>

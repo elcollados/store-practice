@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Checkout</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    </head>
+<body>
+    <header>
+        <h1>Checkout</h1>
+        <nav>
+            <a href="/" class="home">Home</a>
+            <a href="/live" class="live">Live</a>
+            <a href="/cart" class="cart">Cart</a>
+            <a href="/profile" class="profile">Profile</a>
+        </nav>
+    </header>
+<main>
+    <h2 class="label">Your Information</h2>
+    <br><br>
+    <form action="/place-order" method="POST">
+        <div class="checkout">
+        <label class="text">Name</label>
+        <input type="text" name="name" required>
+        <br><br>
+        <label class="text">Address</labe>
+        <input type="text" name="address" required>
+        
+        <br><br><br>
+        <button type="submit" class="checkout-button">Place Order</button>
+
+        </div>
+    </form>
+
+
+</main>
+</body>
+</html>
