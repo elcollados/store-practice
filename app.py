@@ -3,10 +3,14 @@ import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 from dotenv import load_dotenv
+import psycopg2
+from psycopg2.extras import DictCursor
+
 
 load_dotenv()
 
 app = Flask(__name__)
+
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 
@@ -33,15 +37,29 @@ products = [
 
 
 def get_db():
+    database_url = os.getenv("DATABASE_URL")
+
+    if database_url:
+        conn = psycopg2.connect(database_url, cursor_factory=DictCursor)
+        return conn
+
     conn = sqlite3.connect("store.db")
     conn.row_factory = sqlite3.Row
     return conn
+
+def execute_query(cursor, query, values):
+    database_url = os.getenv("DATABASE_URL")
+
+    if database_url:
+        query = query.replace("?", "%s")
+
+    cursor.execute(query, values)
 
 def create_tables():
     conn = get_db()
     cursor = conn.cursor()
 
-    cursor.execute("""
+    execute_query(cursor,"""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
@@ -49,9 +67,9 @@ def create_tables():
             password_hash TEXT NOT NULL,
             is_admin INTEGER DEFAULT 0
          )
-    """)
+    """,())
 
-    cursor.execute("""
+    execute_query(cursor,"""
         CREATE TABLE IF NOT EXISTS orders (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER,
@@ -60,9 +78,9 @@ def create_tables():
             total REAL NOT NULL,
             status TEXT DEFAULT 'Pending'
         )
-    """)
+    """,())
 
-    cursor.execute("""
+    execute_query(cursor,"""
         CREATE TABLE IF NOT EXISTS order_items (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             order_id INTEGER NOT NULL,
@@ -71,7 +89,7 @@ def create_tables():
             quantity INTEGER NOT NULL,
             subtotal REAL NOT NULL
         )
-    """)
+    """,())
 
     conn.commit()
     conn.close()
@@ -83,7 +101,7 @@ def admin_required():
         return False
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute("SELECT is_admin FROM users WHERE id = ?", (session["user_id"],))
+    execute_query(cursor,"SELECT is_admin FROM users WHERE id = ?", (session["user_id"],))
     user = cursor.fetchone()
     conn.close()
     return user and user["is_admin"] == 1
@@ -101,7 +119,7 @@ def register():
         cursor = conn.cursor()
 
         try:
-            cursor.execute(
+            execute_query(cursor,
                 "INSERT INTO users (name, email, password_hash) VALUES(?, ?, ?)",
                 (name, email, password_hash)
             )
@@ -124,7 +142,7 @@ def login():
 
         conn = get_db()
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
+        execute_query(cursor,"SELECT * FROM users WHERE email = ?", (email,))
         user = cursor.fetchone()
         conn.close()
 
@@ -206,16 +224,16 @@ def place_order():
     conn = get_db()
     cursor = conn.cursor()
     
-    cursor.execute(
+    execute_query(cursor,
         "INSERT INTO orders (user_id, name, address, total) VALUES (?, ?, ?, ?)",
         (user_id, name, address, total)
     )
     order_id = cursor.lastrowid
     
     for product in cart_products:
-        cursor.execute(
+        execute_query(cursor,
             "INSERT INTO order_items (order_id, name, price, quantity, subtotal) VALUES (?, ?, ?, ?, ?)",
-            (order_id, product["name"], product["price"], product["quantity"], product["subtotal"])            )
+            (order_id, product["name"], product["price"], product["quantity"], product["subtotal"]))
     
     conn.commit()
     conn.close()
@@ -239,7 +257,7 @@ def admin_orders():
     conn = get_db()
     cursor = conn.cursor()
 
-    cursor.execute("SELECT * FROM orders ORDER BY id DESC")
+    execute_query(cursor,"SELECT * FROM orders ORDER BY id DESC",())
     all_orders = cursor.fetchall()
     conn.close()
 
@@ -256,9 +274,9 @@ def update_status(order_id):
 
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute("UPDATE orders SET status = ? WHERE id = ?", (new_status, order_id))
+    execute_query(cursor,"UPDATE orders SET status = ? WHERE id = ?", (new_status, order_id))
     conn.commit()
-    conn.close
+    conn.close()
 
     return redirect(url_for("admin_orders"))
 
@@ -350,20 +368,20 @@ def clear_session():
 @app.route("/profile")
 def profile():
     if "user_id" not in session:
-        return redirect(url_for("register"))
+        return redirect(url_for("login"))
 
     conn = get_db()
     cursor = conn.cursor()
 
-    cursor.execute("SELECT * FROM users WHERE id = ?", (session["user_id"],))
+    execute_query(cursor,"SELECT * FROM users WHERE id = ?", (session["user_id"],))
     user = cursor.fetchone()
 
-    cursor.execute("SELECT * FROM orders WHERE user_id = ? ORDER BY id DESC", (session["user_id"],))
+    execute_query(cursor,"SELECT * FROM orders WHERE user_id = ? ORDER BY id DESC", (session["user_id"],))
     user_orders = cursor.fetchall()
 
     orders_with_items = []
     for order in user_orders:
-        cursor.execute("SELECT * FROM order_items WHERE order_id = ?", (order["id"],))
+        execute_query(cursor,"SELECT * FROM order_items WHERE order_id = ?", (order["id"],))
         items = cursor.fetchall()
         orders_with_items.append({
             "id": order["id"],
@@ -379,7 +397,7 @@ def profile():
     return render_template("profile.html", user=user, orders=orders_with_items)
 
 
-DEBUG_MODE = os.getenv("FLASK_DEBUG", "0") == "!"
+DEBUG_MODE = os.getenv("FLASK_DEBUG", "0") == "1"
 
 if __name__ == "__main__":
     app.run(debug=DEBUG_MODE)
