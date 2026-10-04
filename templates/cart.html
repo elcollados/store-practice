@@ -34,7 +34,8 @@
                 <a class="view-product" href="{{ url_for('decrease_quantity', product_id=product.id) }}">-</a>
                 <p class="view-product">{{ product.quantity }}</p>
                 <a class="view-product" href="{{ url_for('increase_quantity', product_id=product.id) }}">+</a>
-            
+                <br>
+                <a class="view-product" href="{{ url_for('remove_cart', product_id=product.id) }}">Remove</a>
             </div>
 
             {% endfor %}

@@ -330,6 +330,18 @@ def decrease_quantity(product_id):
     session["cart"] = cart
     return redirect(url_for("cart"))
 
+@app.route("/remove-cart/<int:product_id>")
+def remove_cart(product_id):
+    cart = session.get("cart", {})
+    key = str(product_id)
+
+    if key in cart:
+        del cart[key]
+
+    session["cart"] = cart
+    return redirect(url_for("cart"))
+
+
 
 @app.route("/cart")
 def cart():
