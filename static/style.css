@@ -80,6 +80,7 @@ input::placeholder {
     padding: 10px 10px;
     border-radius: 50%;
 }
+
 .home:hover {
     background-image: none;
     text-transform: uppercase;
@@ -104,6 +105,7 @@ input::placeholder {
     padding: 12px 12px;
     border-radius: 50%;
 }
+
 .cart:hover {
     background-image: none;
     text-transform: uppercase;
@@ -116,6 +118,7 @@ input::placeholder {
     padding: 10px 10px;
     border-radius: 50%;
 }
+
 .profile:hover {
     background-image: none;
     text-transform: uppercase;
