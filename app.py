@@ -368,7 +368,7 @@ def clear_session():
 @app.route("/profile")
 def profile():
     if "user_id" not in session:
-        return redirect(url_for("login"))
+        return redirect(url_for("register"))
 
     conn = get_db()
     cursor = conn.cursor()
