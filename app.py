@@ -59,9 +59,13 @@ def create_tables():
     conn = get_db()
     cursor = conn.cursor()
 
-    execute_query(cursor,"""
+    database_url = os.getenv("DATABASE_URL")
+    id_column = "id SERIAL PRIMARY KEY" if database_url else "id INTEGER PRIMARY KEY AUTOINCREMENT"
+    
+
+    execute_query(cursor, f"""
         CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            {id_column},
             name TEXT NOT NULL,
             email TEXT NOT NULL UNIQUE,
             password_hash TEXT NOT NULL,
@@ -69,9 +73,9 @@ def create_tables():
          )
     """,())
 
-    execute_query(cursor,"""
+    execute_query(cursor, f"""
         CREATE TABLE IF NOT EXISTS orders (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            {id_column},
             user_id INTEGER,
             name TEXT NOT NULL,
             address TEXT NOT NULL,
@@ -80,9 +84,9 @@ def create_tables():
         )
     """,())
 
-    execute_query(cursor,"""
+    execute_query(cursor, f"""
         CREATE TABLE IF NOT EXISTS order_items (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            {id_column},
             order_id INTEGER NOT NULL,
             name TEXT NOT NULL,
             price REAL NOT NULL,
