@@ -64,7 +64,7 @@ def create_tables():
     
 
     execute_query(cursor, f"""
-        CREATE TABLE IF NOT EXISTS users (
+        CREATE TABLE IF NOT EXISTS users2 (
             {id_column},
             name TEXT NOT NULL,
             email TEXT NOT NULL UNIQUE,
@@ -74,7 +74,7 @@ def create_tables():
     """,())
 
     execute_query(cursor, f"""
-        CREATE TABLE IF NOT EXISTS orders (
+        CREATE TABLE IF NOT EXISTS orders2 (
             {id_column},
             user_id INTEGER,
             name TEXT NOT NULL,
@@ -85,7 +85,7 @@ def create_tables():
     """,())
 
     execute_query(cursor, f"""
-        CREATE TABLE IF NOT EXISTS order_items (
+        CREATE TABLE IF NOT EXISTS order_items2 (
             {id_column},
             order_id INTEGER NOT NULL,
             name TEXT NOT NULL,
@@ -105,7 +105,7 @@ def admin_required():
         return False
     conn = get_db()
     cursor = conn.cursor()
-    execute_query(cursor,"SELECT is_admin FROM users WHERE id = ?", (session["user_id"],))
+    execute_query(cursor,"SELECT is_admin FROM users2 WHERE id = ?", (session["user_id"],))
     user = cursor.fetchone()
     conn.close()
     return user and user["is_admin"] == 1
@@ -124,7 +124,7 @@ def register():
 
         try:
             execute_query(cursor,
-                "INSERT INTO users (name, email, password_hash) VALUES(?, ?, ?)",
+                "INSERT INTO users2 (name, email, password_hash) VALUES(?, ?, ?)",
                 (name, email, password_hash)
             )
             conn.commit()
@@ -146,7 +146,7 @@ def login():
 
         conn = get_db()
         cursor = conn.cursor()
-        execute_query(cursor,"SELECT * FROM users WHERE email = ?", (email,))
+        execute_query(cursor,"SELECT * FROM users2 WHERE email = ?", (email,))
         user = cursor.fetchone()
         conn.close()
 
@@ -229,14 +229,14 @@ def place_order():
     cursor = conn.cursor()
     
     execute_query(cursor,
-        "INSERT INTO orders (user_id, name, address, total) VALUES (?, ?, ?, ?)",
+        "INSERT INTO orders2 (user_id, name, address, total) VALUES (?, ?, ?, ?)",
         (user_id, name, address, total)
     )
     order_id = cursor.lastrowid
     
     for product in cart_products:
         execute_query(cursor,
-            "INSERT INTO order_items (order_id, name, price, quantity, subtotal) VALUES (?, ?, ?, ?, ?)",
+            "INSERT INTO order_items2 (order_id, name, price, quantity, subtotal) VALUES (?, ?, ?, ?, ?)",
             (order_id, product["name"], product["price"], product["quantity"], product["subtotal"]))
     
     conn.commit()
@@ -261,7 +261,7 @@ def admin_orders():
     conn = get_db()
     cursor = conn.cursor()
 
-    execute_query(cursor,"SELECT * FROM orders ORDER BY id DESC",())
+    execute_query(cursor,"SELECT * FROM orders2 ORDER BY id DESC",())
     all_orders = cursor.fetchall()
     conn.close()
 
@@ -278,7 +278,7 @@ def update_status(order_id):
 
     conn = get_db()
     cursor = conn.cursor()
-    execute_query(cursor,"UPDATE orders SET status = ? WHERE id = ?", (new_status, order_id))
+    execute_query(cursor,"UPDATE orders2 SET status = ? WHERE id = ?", (new_status, order_id))
     conn.commit()
     conn.close()
 
@@ -389,15 +389,15 @@ def profile():
     conn = get_db()
     cursor = conn.cursor()
 
-    execute_query(cursor,"SELECT * FROM users WHERE id = ?", (session["user_id"],))
+    execute_query(cursor,"SELECT * FROM users2 WHERE id = ?", (session["user_id"],))
     user = cursor.fetchone()
 
-    execute_query(cursor,"SELECT * FROM orders WHERE user_id = ? ORDER BY id DESC", (session["user_id"],))
+    execute_query(cursor,"SELECT * FROM orders2 WHERE user_id = ? ORDER BY id DESC", (session["user_id"],))
     user_orders = cursor.fetchall()
 
     orders_with_items = []
     for order in user_orders:
-        execute_query(cursor,"SELECT * FROM order_items WHERE order_id = ?", (order["id"],))
+        execute_query(cursor,"SELECT * FROM order_items2 WHERE order_id = ?", (order["id"],))
         items = cursor.fetchall()
         orders_with_items.append({
             "id": order["id"],
