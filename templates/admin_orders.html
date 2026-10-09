@@ -28,12 +28,13 @@
                         <option value="Shipped">Shipped</option>
                         <option class="Delivered">Deliverd</option>
                     </select>
-                    <br>
+                    <br><br>
                     <button class="checkout-button" type="submit">Update</button>
                 </form>
                 
                 <p class="price">Total: ${{ order.total }}</p>
                 <br>
+                {% include "_order_items.html" with context %}
                 <br>
                 
                 

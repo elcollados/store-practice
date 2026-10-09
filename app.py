@@ -244,12 +244,16 @@ def place_order():
 
     session.pop("cart", None)
 
+    order = {
+        "total": total,
+        "products": cart_products
+    }
+
     return render_template(
         "order.html",
         name=name,
         address=address,
-        cart_products=cart_products,
-        total=total
+        order=order
     )
 
 
