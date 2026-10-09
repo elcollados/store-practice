@@ -244,7 +244,7 @@ def place_order():
 
     session.pop("cart", None)
 
-    order = {
+    order2 = {
         "total": total,
         "products": cart_products
     }
@@ -253,7 +253,7 @@ def place_order():
         "order.html",
         name=name,
         address=address,
-        order=order
+        order2=order2
     )
 
 
@@ -416,21 +416,21 @@ def profile():
     user_orders = cursor.fetchall()
 
     orders_with_items = []
-    for order in user_orders:
-        execute_query(cursor,"SELECT * FROM order_items2 WHERE order_id = ?", (order["id"],))
-        items = cursor.fetchall()
+    for order2 in user_orders:
+        execute_query(cursor,"SELECT * FROM order_items2 WHERE order_id = ?", (order2["id"],))
+        items2 = cursor.fetchall()
         orders_with_items.append({
-            "id": order["id"],
-            "address": order["address"],
-            "total": order["total"],
-            "status": order["status"],
-            "products": items
+            "id": order2["id"],
+            "address": order2["address"],
+            "total": order2["total"],
+            "status": order2["status"],
+            "products": items2
         })
 
 
     conn.close()
 
-    return render_template("profile.html", user=user, orders=orders_with_items)
+    return render_template("profile.html", user=user, orders2=orders_with_items)
 
 
 DEBUG_MODE = os.getenv("FLASK_DEBUG", "0") == "1"
