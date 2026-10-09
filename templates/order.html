@@ -20,12 +20,10 @@
         <p class="label">{{ name }}</p>
         <p class="label">Shipped to: {{ address }}</p>
         <section  class="products">
-            {% for product in cart_products %}
             <div class="product">
-                <h2 class="name">{{ product.name }}</h2>
-                <p class="price">$ {{ product.price }} x {{ product.quantity }} pcs = {{ product.subtotal }}</p>
+                {% include "_order_items.html" with context %}
+            <br>          
             </div>
-            {% endfor %}
         </section>
         <p><strong>Total: ${{ total }}</strong></p>
         <br><br><br>
