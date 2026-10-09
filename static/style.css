@@ -160,7 +160,7 @@ input::placeholder {
     padding: 10px 10px;
     border-radius: 50%;
 }
-.logout {
+.logout:hover {
     background-image: none;
     text-transform: uppercase;
 }
