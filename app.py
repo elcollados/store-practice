@@ -299,6 +299,7 @@ def checkout():
     return render_template("checkout.html")
 
 
+
 @app.route("/add-to-cart/<int:product_id>")
 def add_to_cart(product_id):
     cart = session.get("cart", {})
