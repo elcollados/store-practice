@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
@@ -22,17 +22,17 @@ app.secret_key = SECRET_KEY
 
 orders = []
 products = [
-    {"id": 0, "name": "zero", "price": 1, "stock": 0, "image": "zero.jpg"},
-    {"id": 1, "name": "one", "price": 100, "stock": 10, "image": "one.jpg"},
-    {"id": 2, "name": "two", "price": 200, "stock": 22, "image": "two.jpg"},
-    {"id": 3, "name": "three", "price": 300, "stock": 33, "image": "three.jpg"},
-    {"id": 4, "name": "four", "price": 400, "stock": 44, "image": "four.jpg"},
-    {"id": 5, "name": "five", "price": 500, "stock": 55, "image": "five.jpg"},
-    {"id": 6, "name": "six", "price": 600, "stock": 66, "image": "six.jpg"},
-    {"id": 7, "name": "seven", "price": 700, "stock": 77, "image": "seven.jpg"},
-    {"id": 8, "name": "eight", "price": 800, "stock": 88, "image": "eight.jpg"},
-    {"id": 9, "name": "nine", "price": 900, "stock": 99, "image": "nine.jpg"},
-    {"id": 10, "name": "ten", "price": 1000, "stock": 100, "image": "ten.jpg"}
+    {"id": 0, "name": "Monitor", "price": 1, "stock": 0, "image": "monitor1.jfif"},
+    {"id": 1, "name": "keyboard", "price": 100, "stock": 10, "image": "keyboard1.jfif"},
+    {"id": 2, "name": "Mouse", "price": 200, "stock": 22, "image": "mouse1.webp"},
+    {"id": 3, "name": "CPU-H110M", "price": 300, "stock": 33, "image": "H110M1.jpg"},
+    {"id": 4, "name": "SSD 4GB RAM", "price": 400, "stock": 44, "image": "SSD1.webp"},
+    {"id": 5, "name": "Power Suply", "price": 500, "stock": 55, "image": "PSU1.webp"},
+    {"id": 6, "name": "PC case", "price": 600, "stock": 66, "image": "pccase1.jpg"},
+    {"id": 7, "name": "GPU-GTX1050", "price": 700, "stock": 77, "image": "GTX10501.jfif"},
+    {"id": 8, "name": "Motherboard-G4560", "price": 800, "stock": 88, "image": "G45601.jfif"},
+    {"id": 9, "name": "4Gb RAM", "price": 900, "stock": 99, "image": "4GBRAM1.jfif"},
+    {"id": 10, "name": "CPU Cooler", "price": 1000, "stock": 100, "image": "cpucooler1.webp"}
 ]
 
 
@@ -300,11 +300,17 @@ def add_to_cart(product_id):
     cart = session.get("cart", {})
     key  = str(product_id)
 
-    if key in cart:
-        cart[key] += 1
-    else:
-        cart[key] = 1
+    product = next((p for p in products if p["id"] == product_id), None)
+    if product is None:
+        return redirect(request.referrer)
 
+    current_qty = cart.get(key, 0)
+
+    if current_qty >= product["stock"]:
+        flash("Sorry, no more stock for this item.")
+        return redirect(request.referrer)
+
+    cart[key] = current_qty + 1
     session["cart"] = cart
     return redirect(request.referrer)
 
@@ -314,9 +320,17 @@ def increase_quantity(product_id):
     cart = session.get("cart", {})
     key = str(product_id)
 
-    if key in cart:
-        cart[key] += 1
+    product = next((p for p in products if p["id"] == product_id), None)
+    if product is None:
+        return redirect(request.referrer)
 
+    current_qty = cart.get(key, 0)
+
+    if current_qty >= product["stock"]:
+        flash("Sorry, no more stock for this item.")
+        return redirect(request.referrer)
+        
+    cart[key] = current_qty + 1
     session["cart"] = cart
     return redirect(url_for("cart"))
 
@@ -363,7 +377,8 @@ def cart():
                 "name": product["name"],
                 "price": product["price"],
                 "quantity": quantity,
-                "subtotal": subtotal
+                "subtotal": subtotal,
+                "stock": product["stock"]
             })
 
     total_price = 0
@@ -384,7 +399,7 @@ def clear_session():
 @app.route("/profile")
 def profile():
     if "user_id" not in session:
-        return redirect(url_for("register"))
+        return redirect(url_for("login"))
 
     conn = get_db()
     cursor = conn.cursor()

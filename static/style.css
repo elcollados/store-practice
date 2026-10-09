@@ -31,6 +31,10 @@ header nav {
     align-items: center;
     gap: 15px;
     color: #a0b1c5;
+    flex-direction: row;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
 }
 
 nav button {
@@ -39,6 +43,7 @@ nav button {
     padding: 10px 10px;
     border-radius: 20px;
     font-size: 20px;
+    align-items: center;
 }
 
 nav button:hover {
@@ -74,7 +79,7 @@ input::placeholder {
 
 
 .home {
-    background-image: url("image/three.jpg");
+    background-image: url("image/home1.png");
     background-size: cover;
     background-position: center;
     padding: 10px 10px;
@@ -87,7 +92,7 @@ input::placeholder {
 }
 
 .live {
-    background-image: url("image/four.jpg");
+    background-image: url("image/video1.jfif");
     background-size: cover;
     background-position: center;
     padding: 10px 10px;
@@ -99,7 +104,7 @@ input::placeholder {
 }
 
 .cart {
-    background-image: url("image/six.jpg");
+    background-image: url("image/cart1.jfif");
     background-size: cover;
     background-position: center;
     padding: 12px 12px;
@@ -112,7 +117,7 @@ input::placeholder {
 }
 
 .profile {
-    background-image: url("image/lion.jpg");
+    background-image: url("image/profile1.jfif");
     background-size: cover;
     background-position: center;
     padding: 10px 10px;
@@ -123,6 +128,43 @@ input::placeholder {
     background-image: none;
     text-transform: uppercase;
 }
+
+.register {
+    background-image: url("image/register1.png");
+    background-size: cover;
+    background-position: center;
+    padding: 10px 10px;
+    border-radius: 50%;
+}
+.register:hover {
+    background-image: none;
+    text-transform: uppercase;
+}
+
+.login {
+    background-image: url("image/login1.png");
+    background-size: cover;
+    background-position: center;
+    padding: 10px 10px;
+    border-radius: 50%;
+}
+.login:hover {
+    background-image: none;
+    text-transform: uppercase;
+}
+
+.logout {
+    background-image: url("image/logout1.png");
+    background-size: cover;
+    background-position: center;
+    padding: 10px 10px;
+    border-radius: 50%;
+}
+.logout {
+    background-image: none;
+    text-transform: uppercase;
+}
+
 
 body {
     background-color: #0b1622;
@@ -137,6 +179,12 @@ main {
     align-items: center;
 }
 
+.search {
+    padding: auto;
+    height: 30px;
+    width: auto;
+    display: inline;
+}
 
 
 
@@ -146,6 +194,9 @@ main {
     flex-wrap: wrap;
     gap: 20px;
     padding: 30px;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
 }
 
 .product {
@@ -210,6 +261,7 @@ main {
     padding: 10px 200px;
     background-color: #142030;
     border-radius: 20px;
+    margin: 5px;
 }
 
 .checkout {
@@ -223,6 +275,13 @@ main {
     font-size: 25px;
     align-items: center;
 }
+
+.textbox {
+   display: flex;
+   box-sizing: border-box;
+   margin: 0;
+}
+
 
 .checkout-button {
     padding: 10px;

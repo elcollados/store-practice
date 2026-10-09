@@ -5,21 +5,28 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='style.css' ) }}">
     </head>
 <body>
+    {% with messages = get_flashed_messages() %}
+        {% for message in messages %}
+            <p class="flash">{{ message }}</p>
+        {% endfor %}
+    {% endwith %}
 
     <header>
         <h1>Cart</h1>
         
         <nav>
             <a href="/" class="home">Home</a>
-            <a href="/live" class="live">Live</a>
+            <a href="/live" class="live">Videos</a>
             <a href="/cart" class="cart">Cart</a>
             <a href="/profile" class="profile">Profile</a>
             <a href="/login" class="home">Login</a>
+            <a href="/register" class="register">Register</a>
         </nav>
 
     </header>
 
     <main>
+        <br><br>
 
         <h2 class="label">Your Cart</h2>
         {% if cart_products %}
@@ -33,7 +40,11 @@
                 <br><br>
                 <a class="view-product" href="{{ url_for('decrease_quantity', product_id=product.id) }}">-</a>
                 <p class="view-product">{{ product.quantity }}</p>
-                <a class="view-product" href="{{ url_for('increase_quantity', product_id=product.id) }}">+</a>
+                {% if product.quantity <  product.stock %}
+                    <a class="view-product" href="{{ url_for('increase_quantity', product_id=product.id) }}">+</a>
+                {% else %}
+                    <span class="view-product">Max</span>
+                {% endif %}
                 <br>
                 <a class="view-product" href="{{ url_for('remove_cart', product_id=product.id) }}">Remove</a>
             </div>
