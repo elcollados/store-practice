@@ -16,29 +16,29 @@
         <h2>All Orders</h2>
 
         <section class="products">
-            {% for order in orders %}
+            {% for order2 in orders2 %}
             <div class="product-list">
-                <h2>Order #{{ order.id }}</h2>
-                <h2>Purchaser: {{ order.name }}</h2>
-                <h2>Shipped to: {{ order.address }}</h2>
-                <h2>Status: {{ order.status }}</h2>
-                <form action="{{ url_for('update_status', order_id=order.id) }}" method="POST">
+                <h2>Order #{{ order2.id }}</h2>
+                <h2>Purchaser: {{ order2.name }}</h2>
+                <h2>Shipped to: {{ order2.address }}</h2>
+                <h2>Status: {{ order2.status }}</h2>
+                <form action="{{ url_for('update_status', order2_id=order2.id) }}" method="POST">
                     <select class="status" name="status">
-                        <option value="Pending">Pending</option>
-                        <option value="Shipped">Shipped</option>
-                        <option class="Delivered">Deliverd</option>
+                        <option value="Pending" {% if order2.status == "Pending" %}selected{% endif %}>Pending</option>
+                        <option value="Shipped" {% if order2.status == "Shipped" %}selected{% endif %}>Shipped</option>
+                        <option value="Delivered" {% if order2.status == "Delivered" %}selected{% endif %}>Delivered</option>
                     </select>
                     <br><br>
                     <button class="checkout-button" type="submit">Update</button>
                 </form>
                 
-                <p class="price">Total: ${{ order.total }}</p>
+                <p class="price">Total: ${{ order2.total }}</p>
                 <br>
                 {% include "_order_items.html" with context %}
                 <br>
                 
                 
-                
+
             </div>
             {% endfor %}
         </section>

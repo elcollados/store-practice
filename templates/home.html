@@ -34,24 +34,24 @@
 
 <main>
     <section class="products">
-        {% for product in products %}
+        {% for product2 in products2 %}
         <div class="product">
-            <a href="{{ url_for('product_detail', product_id=product.id ) }}">
-                <img src="{{ url_for('static', filename='image/' + product.image) }}" alt {{ product.name }}>
+            <a href="{{ url_for('product_detail', product2_id=product2.id ) }}">
+                <img src="{{ url_for('static', filename='image/' + product2.image) }}" alt {{ product2.name }}>
             </a>
-            <a class="name" href="{{ url_for('product_detail', product_id=product.id) }}">{{ product.name }}</a>
-            <p class="price">${{ product.price }}</p>
+            <a class="name" href="{{ url_for('product_detail', product2_id=product2.id) }}">{{ product2.name }}</a>
+            <p class="price">${{ product2.price }}</p>
             
-            {% if product.stock > 0 %}
-                <p class="stock">In stock: {{product.stock}}</p>
+            {% if product2.stock > 0 %}
+                <p class="stock">In stock: {{product2.stock}}</p>
             {% else %}
                 <p class="stock out">Out of stock</p>
             {% endif %}
 
-            <a class="view-product" href="{{ url_for('product_detail', product_id=product.id) }}">View Product</a>
+            <a class="view-product" href="{{ url_for('product_detail', product2_id=product2.id) }}">View Product</a>
 
-            {% if product.stock > 0 %}
-                <a class="view-product" href="{{ url_for('add_to_cart', product_id=product.id ) }}">Add to Cart</a>
+            {% if product2.stock > 0 %}
+                <a class="view-product" href="{{ url_for('add_to_cart', product2_id=product2.id ) }}">Add to Cart</a>
             {% else %}
                 <p class="view-product">Out of stock</p>
             {% endif %}

@@ -302,9 +302,10 @@ strong {
     font-weight: bold;
     color: goldenrod;
     font-size: 24px;
-    padding: 30px;
+    padding: 20px 200px;
     background-color: #142030;
     border-radius: 30px;
+    margin: 50px;
 }
 
 .product-list {

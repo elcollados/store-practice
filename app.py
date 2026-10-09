@@ -20,8 +20,8 @@ if not SECRET_KEY:
 app.secret_key = SECRET_KEY
 
 
-orders = []
-products = [
+orders2 = []
+products2 = [
     {"id": 0, "name": "Monitor", "price": 1, "stock": 0, "image": "monitor1.jfif"},
     {"id": 1, "name": "keyboard", "price": 100, "stock": 10, "image": "keyboard1.jfif"},
     {"id": 2, "name": "Mouse", "price": 200, "stock": 22, "image": "mouse1.webp"},
@@ -170,14 +170,14 @@ def logout():
 
 @app.route("/")
 def home():
-    return render_template("home.html", products=products)
+    return render_template("home.html", products2=products2)
 
 
-@app.route("/product/<int:product_id>")
-def product_detail(product_id):
-    for product in products:
-        if product["id"] == product_id:
-            return render_template("product.html", product=product) 
+@app.route("/product/<int:product2_id>")
+def product_detail(product2_id):
+    for product2 in products2:
+        if product2["id"] == product2_id:
+            return render_template("product.html", product2=product2) 
     return "Product not found", 404
 
 
@@ -186,9 +186,9 @@ def search():
     query = request.args.get("search", "")
 
     results = []
-    for product in products:
-        if query.lower() in product["name"].lower():
-            results.append(product)
+    for product2 in products2:
+        if query.lower() in product2["name"].lower():
+            results.append(product2)
 
     return render_template("search.html", results=results, query=query)
 
@@ -203,26 +203,26 @@ def place_order():
     name = request.form["name"]
     address = request.form["address"]
 
-    cart_data = session.get("cart", {})
-    user_id = session.get("user_id")
+    cart_data2 = session.get("cart", {})
+    user_id2 = session.get("user_id")
 
 
-    cart_products = []
-    for product in products:
-        key = str(product["id"])
-        if key in cart_data:
-            quantity = cart_data[key]
-            subtotal = product["price"] * quantity
-            cart_products.append({
-                "name": product["name"],
-                "price": product["price"],
-                "quantity": quantity,
-                "subtotal": subtotal
+    cart_products2 = []
+    for product2 in products2:
+        key = str(product2["id"])
+        if key in cart_data2:
+            quantity2 = cart_data2[key]
+            subtotal2 = product2["price"] * quantity2
+            cart_products2.append({
+                "name": product2["name"],
+                "price": product2["price"],
+                "quantity": quantity2,
+                "subtotal": subtotal2
             })
 
     total = 0
-    for product in cart_products:
-        total += product["subtotal"]
+    for product2 in cart_products2:
+        total += product2["subtotal"]
 
 
     conn = get_db()
@@ -230,14 +230,14 @@ def place_order():
     
     execute_query(cursor,
         "INSERT INTO orders2 (user_id, name, address, total) VALUES (?, ?, ?, ?)",
-        (user_id, name, address, total)
+        (user_id2, name, address, total)
     )
-    order_id = cursor.lastrowid
+    order_id2 = cursor.lastrowid
     
-    for product in cart_products:
+    for product2 in cart_products2:
         execute_query(cursor,
             "INSERT INTO order_items2 (order_id, name, price, quantity, subtotal) VALUES (?, ?, ?, ?, ?)",
-            (order_id, product["name"], product["price"], product["quantity"], product["subtotal"]))
+            (order_id2, product2["name"], product2["price"], product2["quantity"], product2["subtotal"]))
     
     conn.commit()
     conn.close()
@@ -246,7 +246,7 @@ def place_order():
 
     order2 = {
         "total": total,
-        "products": cart_products
+        "products": cart_products2
     }
 
     return render_template(
@@ -269,12 +269,12 @@ def admin_orders():
     all_orders = cursor.fetchall()
     conn.close()
 
-    return render_template("admin_orders.html", orders=all_orders)
+    return render_template("admin_orders.html", orders2=all_orders)
 
 
 
-@app.route("/admin/update-status/<int:order_id>", methods=["POST"])
-def update_status(order_id):
+@app.route("/admin/update-status/<int:order2_id>", methods=["POST"])
+def update_status(order2_id):
     if not admin_required():
         return redirect(url_for("login"))
 
@@ -282,7 +282,14 @@ def update_status(order_id):
 
     conn = get_db()
     cursor = conn.cursor()
-    execute_query(cursor,"UPDATE orders2 SET status = ? WHERE id = ?", (new_status, order_id))
+    execute_query(cursor,"SELECT status FROM orders2 WHERE id = ?", (order2_id,))
+    row = cursor.fetchone()
+
+    if row and row["status"] == "Shipped" and new_status == "Pending":
+        conn.closed
+        return redirect(url_for("admin_orders"))
+
+    execute_query(cursor, "UPDATE orders2 SET status = ? WHERE id = ?", (new_status, order2_id))
     conn.commit()
     conn.close()
 
@@ -300,18 +307,18 @@ def checkout():
 
 
 
-@app.route("/add-to-cart/<int:product_id>")
-def add_to_cart(product_id):
+@app.route("/add-to-cart/<int:product2_id>")
+def add_to_cart(product2_id):
     cart = session.get("cart", {})
-    key  = str(product_id)
+    key  = str(product2_id)
 
-    product = next((p for p in products if p["id"] == product_id), None)
-    if product is None:
+    product2 = next((p for p in products2 if p["id"] == product2_id), None)
+    if product2 is None:
         return redirect(request.referrer)
 
     current_qty = cart.get(key, 0)
 
-    if current_qty >= product["stock"]:
+    if current_qty >= product2["stock"]:
         flash("Sorry, no more stock for this item.")
         return redirect(request.referrer)
 
@@ -320,18 +327,18 @@ def add_to_cart(product_id):
     return redirect(request.referrer)
 
 
-@app.route("/increase-quantity/<int:product_id>")
-def increase_quantity(product_id):
+@app.route("/increase-quantity/<int:product2_id>")
+def increase_quantity(product2_id):
     cart = session.get("cart", {})
-    key = str(product_id)
+    key = str(product2_id)
 
-    product = next((p for p in products if p["id"] == product_id), None)
-    if product is None:
+    product2 = next((p for p in products2 if p["id"] == product2_id), None)
+    if product2 is None:
         return redirect(request.referrer)
 
     current_qty = cart.get(key, 0)
 
-    if current_qty >= product["stock"]:
+    if current_qty >= product2["stock"]:
         flash("Sorry, no more stock for this item.")
         return redirect(request.referrer)
         
@@ -340,10 +347,10 @@ def increase_quantity(product_id):
     return redirect(url_for("cart"))
 
 
-@app.route("/decrease-quantity/<int:product_id>")
-def decrease_quantity(product_id):
+@app.route("/decrease-quantity/<int:product2_id>")
+def decrease_quantity(product2_id):
     cart = session.get("cart", {})
-    key = str(product_id)
+    key = str(product2_id)
 
     if key in cart:
         cart[key] -= 1
@@ -353,10 +360,10 @@ def decrease_quantity(product_id):
     session["cart"] = cart
     return redirect(url_for("cart"))
 
-@app.route("/remove-cart/<int:product_id>")
-def remove_cart(product_id):
+@app.route("/remove-cart/<int:product2_id>")
+def remove_cart(product2_id):
     cart = session.get("cart", {})
-    key = str(product_id)
+    key = str(product2_id)
 
     if key in cart:
         del cart[key]
@@ -368,31 +375,31 @@ def remove_cart(product_id):
 
 @app.route("/cart")
 def cart():
-    cart_data = session.get("cart", {})
+    cart_data2 = session.get("cart", {})
 
-    cart_products = []
-    for product in products:
-        key = str(product["id"]) 
-        if key in cart_data:
-            quantity = cart_data[key]
-            subtotal = product["price"] * quantity
+    cart_products2 = []
+    for product2 in products2:
+        key = str(product2["id"]) 
+        if key in cart_data2:
+            quantity2 = cart_data2[key]
+            subtotal2 = product2["price"] * quantity2
 
-            cart_products.append({
-                "id": product["id"],
-                "name": product["name"],
-                "price": product["price"],
-                "quantity": quantity,
-                "subtotal": subtotal,
-                "stock": product["stock"]
+            cart_products2.append({
+                "id": product2["id"],
+                "name": product2["name"],
+                "price": product2["price"],
+                "quantity": quantity2,
+                "subtotal": subtotal2,
+                "stock": product2["stock"]
             })
 
-    total_price = 0
-    total_quantity = 0
-    for product in cart_products:
-        total_price += product["subtotal"]
-        total_quantity += product["quantity"]
+    total_price2 = 0
+    total_quantity2 = 0
+    for product2 in cart_products2:
+        total_price2 += product2["subtotal"]
+        total_quantity2 += product2["quantity"]
         
-    return render_template("cart.html", cart_products=cart_products, total_price=total_price,total_quantity=total_quantity)
+    return render_template("cart.html", cart_products2=cart_products2, total_price2=total_price2,total_quantity2=total_quantity2)
 
 
 @app.route("/clear-cart")
@@ -413,10 +420,10 @@ def profile():
     user = cursor.fetchone()
 
     execute_query(cursor,"SELECT * FROM orders2 WHERE user_id = ? ORDER BY id DESC", (session["user_id"],))
-    user_orders = cursor.fetchall()
+    user_orders2 = cursor.fetchall()
 
     orders_with_items = []
-    for order2 in user_orders:
+    for order2 in user_orders2:
         execute_query(cursor,"SELECT * FROM order_items2 WHERE order_id = ?", (order2["id"],))
         items2 = cursor.fetchall()
         orders_with_items.append({

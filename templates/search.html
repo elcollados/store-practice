@@ -20,11 +20,11 @@
         <h2>Results for "{{ query }}"</h2>
         {% if results %}
             <section class="product">
-                {% for product in results %}
+                {% for product2 in results %}
                 <div class="product">
-                    <h2 class="name">{{ product.name }}</h2>
-                    <p class="price">${{ product.price }}</p>
-                    <a class="view-product" href="{{ url_for('product_detail', product_id=product.id) }}">View Product</a>
+                    <h2 class="name">{{ product2.name }}</h2>
+                    <p class="price">${{ product2.price }}</p>
+                    <a class="view-product" href="{{ url_for('product_detail', product2_id=product2.id) }}">View Product</a>
                     </div>
                 {% endfor %}
             </section>
