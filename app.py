@@ -229,10 +229,10 @@ def place_order():
     cursor = conn.cursor()
     
     execute_query(cursor,
-        "INSERT INTO orders2 (user_id, name, address, total) VALUES (?, ?, ?, ?)",
-        (user_id2, name, address, total)
+        "INSERT INTO orders2 (user_id, name, address, total) VALUES (?, ?, ?, ?, ?) RETURNING id",
+        (user_id2, name, address, total, "Pending" )
     )
-    order_id2 = cursor.lastrowid
+    order_id2 = cursor.fetchone()["id"]
     
     for product2 in cart_products2:
         execute_query(cursor,
