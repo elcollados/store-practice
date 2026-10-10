@@ -229,7 +229,7 @@ def place_order():
     cursor = conn.cursor()
     
     execute_query(cursor,
-        "INSERT INTO orders2 (user_id, name, address, total) VALUES (?, ?, ?, ?, ?) RETURNING id",
+        "INSERT INTO orders2 (user_id, name, address, total, status) VALUES (?, ?, ?, ?, ?) RETURNING id",
         (user_id2, name, address, total, "Pending" )
     )
     order_id2 = cursor.fetchone()["id"]
@@ -248,6 +248,7 @@ def place_order():
         "total": total,
         "products": cart_products2
     }
+
 
     return render_template(
         "order.html",
@@ -433,7 +434,6 @@ def profile():
             "status": order2["status"],
             "products": items2
         })
-
 
     conn.close()
 
